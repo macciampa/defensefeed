@@ -15,7 +15,20 @@
       "Bash(node \"C:/Users/macci/.claude/skills/gstack/browse/dist/server-node.mjs\")",
       "Bash(node -e ':*)",
       "Bash(C:/Users/macci/.claude/skills/gstack/browse/dist/browse.exe pair-agent:*)",
-      "Bash(~/.claude/skills/gstack/bin/gstack-timeline-log '{\"skill\":\"pair-agent\",\"event\":\"completed\",\"branch\":\"unknown\",\"outcome\":\"success\",\"session\":\"pair-agent-cursor-local\"}')"
+      "Bash(~/.claude/skills/gstack/bin/gstack-timeline-log '{\"skill\":\"pair-agent\",\"event\":\"completed\",\"branch\":\"unknown\",\"outcome\":\"success\",\"session\":\"pair-agent-cursor-local\"}')",
+      "Bash(docker compose:*)",
+      "Bash(docker info:*)",
+      "Bash(docker context:*)",
+      "Bash(docker-compose build:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(ls C:/wrk/pryzm/frontend/next.config*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose exec backend python -c ':*)",
+      "Bash(docker-compose exec:*)",
+      "Bash(docker-compose restart:*)",
+      "Bash(curl -s http://localhost:8000/health)",
+      "Bash(curl -s http://localhost:8000/poll/status)",
+      "Bash(docker-compose down:*)"
     ]
   }
 }
