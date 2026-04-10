@@ -74,7 +74,15 @@ def poll_sam_gov() -> None:
                     "limit": limit,
                     "offset": offset,
                 }
-                resp = http.get(SAM_API_BASE, params=params)
+                # Retry with backoff on 429
+                for attempt in range(4):
+                    resp = http.get(SAM_API_BASE, params=params)
+                    if resp.status_code == 429:
+                        wait = 15 * (2 ** attempt)
+                        logger.warning("SAM.gov 429 — waiting %ds (attempt %d/4)", wait, attempt + 1)
+                        import time; time.sleep(wait)
+                        continue
+                    break
                 resp.raise_for_status()
                 data = resp.json()
 
@@ -94,7 +102,7 @@ def poll_sam_gov() -> None:
                     break
 
     except Exception as exc:
-        logger.error("SAM.gov fetch error: %s", exc, exc_info=True)
+        logger.warning("SAM.gov fetch skipped: %s", exc)
         return
 
     logger.info("Fetched %d total opportunities from SAM.gov", len(all_opps))
@@ -198,12 +206,11 @@ def start_scheduler() -> None:
     _scheduler.start()
     logger.info("APScheduler started — SAM.gov poll every hour")
 
-    # Run immediately so the feed is populated without waiting an hour
-    logger.info("Running initial SAM.gov poll on startup")
-    try:
-        poll_sam_gov()
-    except Exception as exc:
-        logger.error("Initial poll failed: %s", exc, exc_info=True)
+    # Run immediately in a background thread so startup is not blocked
+    import threading
+    t = threading.Thread(target=poll_sam_gov, daemon=True, name="sam-poll-startup")
+    t.start()
+    logger.info("Initial SAM.gov poll started in background thread")
 
 
 def stop_scheduler() -> None:

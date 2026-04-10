@@ -36,3 +36,27 @@ app.include_router(feed.router)
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+
+@app.post("/poll")
+def trigger_poll():
+    """Manually trigger a SAM.gov poll. Runs in background thread."""
+    import threading
+    t = threading.Thread(target=poller.poll_sam_gov, daemon=True)
+    t.start()
+    return {"status": "poll started"}
+
+
+@app.get("/poll/status")
+def poll_status():
+    """Return opportunity count and last sync time."""
+    from database import SessionLocal
+    from models import Opportunity
+    from sqlalchemy import func
+    db = SessionLocal()
+    try:
+        total = db.query(func.count(Opportunity.id)).scalar()
+        latest = db.query(func.max(Opportunity.synced_at)).scalar()
+        return {"total_opportunities": total, "last_synced": latest}
+    finally:
+        db.close()
