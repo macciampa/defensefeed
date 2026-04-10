@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(start \"\" \"C:/Users/macci/.gstack/projects/pryzm/designs/feed-view-20260410/variant-A.html\")",
+      "Bash(start \"\" \"C:/Users/macci/.gstack/projects/pryzm/designs/feed-view-20260410/variant-B.html\")",
+      "Bash(start \"\" \"C:/Users/macci/.gstack/projects/pryzm/designs/feed-view-20260410/variant-C.html\")",
+      "Bash(start \"\" \"C:/Users/macci/.gstack/projects/pryzm/designs/feed-view-20260410/variant-remix.html\")",
+      "Bash(~/.claude/skills/gstack/bin/gstack-timeline-log '{\"skill\":\"design-shotgun\",\"event\":\"completed\",\"branch\":\"unknown\",\"outcome\":\"success\",\"session\":\"design-feed-view-20260410\"}')",
+      "Read(//c/Users/macci/.claude/skills/gstack/**)",
+      "Bash(./setup)",
+      "Bash(C:/Users/macci/.claude/skills/gstack/browse/dist/browse status:*)",
+      "Bash(bash browse/scripts/build-node-server.sh)",
+      "Bash(bun build:*)",
+      "Bash(C:/Users/macci/.claude/skills/gstack/browse/dist/browse.exe goto:*)",
+      "Bash(node \"C:/Users/macci/.claude/skills/gstack/browse/dist/server-node.mjs\")",
+      "Bash(node -e ':*)",
+      "Bash(C:/Users/macci/.claude/skills/gstack/browse/dist/browse.exe pair-agent:*)",
+      "Bash(~/.claude/skills/gstack/bin/gstack-timeline-log '{\"skill\":\"pair-agent\",\"event\":\"completed\",\"branch\":\"unknown\",\"outcome\":\"success\",\"session\":\"pair-agent-cursor-local\"}')"
+    ]
+  }
+}
