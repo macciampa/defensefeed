@@ -1,4 +1,5 @@
 import os
+import re
 import logging
 from datetime import datetime, timezone, timedelta
 
@@ -11,9 +12,19 @@ from embeddings import embed_texts_batch, build_opportunity_embedding_text
 
 logger = logging.getLogger(__name__)
 
+# httpx logs every request at INFO with the full URL — which leaks SAM_API_KEY
+# into our logs on each poll. Bump it to WARNING so only errors surface.
+logging.getLogger("httpx").setLevel(logging.WARNING)
+
 SAM_API_BASE = "https://api.sam.gov/opportunities/v2/search"
 SAM_DATE_FORMAT = "%m/%d/%Y"
+_API_KEY_QUERY_RE = re.compile(r"(api_key=)[^&\s'\"]+")
 _scheduler: BackgroundScheduler | None = None
+
+
+def _redact(text: str) -> str:
+    """Strip SAM_API_KEY from any string that might hit the logs."""
+    return _API_KEY_QUERY_RE.sub(r"\1REDACTED", text)
 
 
 def _parse_deadline(value: str | None) -> datetime | None:
@@ -102,7 +113,7 @@ def poll_sam_gov() -> None:
                     break
 
     except Exception as exc:
-        logger.warning("SAM.gov fetch skipped: %s", exc)
+        logger.warning("SAM.gov fetch skipped: %s", _redact(str(exc)))
         return
 
     logger.info("Fetched %d total opportunities from SAM.gov", len(all_opps))
