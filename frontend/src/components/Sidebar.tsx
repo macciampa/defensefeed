@@ -6,6 +6,12 @@ import type { ProfileExtraction } from '@/types'
 interface Filters {
   urgency: string
   minMatch: number
+  setAsides: {
+    eightA: boolean
+    sdvosb: boolean
+    hubzone: boolean
+    totalSB: boolean
+  }
 }
 
 interface Props {
@@ -83,14 +89,6 @@ function ChevronIcon({ open }: { open: boolean }) {
 
 export function Sidebar({ matchCount, profile, filters, onFiltersChange }: Props) {
   const [filtersOpen, setFiltersOpen] = useState(true)
-
-  // Set-aside checkboxes — visual only in v1
-  const [setAsides, setSetAsides] = useState({
-    eightA: false,
-    sdvosb: false,
-    hubzone: false,
-    totalSB: false,
-  })
 
   const urgencyOptions = ['All', 'Urgent', 'Soon']
 
@@ -195,9 +193,12 @@ export function Sidebar({ matchCount, profile, filters, onFiltersChange }: Props
                   >
                     <input
                       type="checkbox"
-                      checked={setAsides[key]}
+                      checked={filters.setAsides[key]}
                       onChange={(e) =>
-                        setSetAsides((prev) => ({ ...prev, [key]: e.target.checked }))
+                        onFiltersChange({
+                          ...filters,
+                          setAsides: { ...filters.setAsides, [key]: e.target.checked },
+                        })
                       }
                       className="w-3.5 h-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer"
                     />

@@ -14,6 +14,19 @@ import { Sidebar } from '@/components/Sidebar'
 interface Filters {
   urgency: string
   minMatch: number
+  setAsides: {
+    eightA: boolean
+    sdvosb: boolean
+    hubzone: boolean
+    totalSB: boolean
+  }
+}
+
+const SET_ASIDE_CODES: Record<keyof Filters['setAsides'], string[]> = {
+  eightA:  ['8AN'],
+  sdvosb:  ['SDVOSBC', 'SDVOSBS'],
+  hubzone: ['HZC', 'HZS'],
+  totalSB: ['TotalSmallBusiness'],
 }
 
 // ---------------------------------------------------------------------------
@@ -66,7 +79,11 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [profile, setProfile] = useState<ProfileExtraction | null>(null)
-  const [filters, setFilters] = useState<Filters>({ urgency: 'All', minMatch: 0 })
+  const [filters, setFilters] = useState<Filters>({
+    urgency: 'All',
+    minMatch: 0,
+    setAsides: { eightA: false, sdvosb: false, hubzone: false, totalSB: false },
+  })
   // Demo: fixed new-opportunity count banner
   const [newCount] = useState(3)
 
@@ -104,10 +121,16 @@ export default function FeedPage() {
 
   // Client-side filtering
   const filteredOpportunities = useMemo(() => {
+    const activeSetAsides = (Object.keys(filters.setAsides) as Array<keyof typeof filters.setAsides>)
+      .filter((k) => filters.setAsides[k])
     return opportunities.filter((opp) => {
       if (opp.similarity < filters.minMatch / 100) return false
-      if (filters.urgency === 'Urgent') return opp.urgency === 'red'
-      if (filters.urgency === 'Soon') return opp.urgency === 'red' || opp.urgency === 'yellow'
+      if (filters.urgency === 'Urgent' && opp.urgency !== 'red') return false
+      if (filters.urgency === 'Soon' && opp.urgency !== 'red' && opp.urgency !== 'yellow') return false
+      if (activeSetAsides.length > 0) {
+        const codes = activeSetAsides.flatMap((k) => SET_ASIDE_CODES[k])
+        if (!opp.set_aside_type || !codes.includes(opp.set_aside_type)) return false
+      }
       return true
     })
   }, [opportunities, filters])
@@ -246,3 +269,4 @@ export default function FeedPage() {
     </div>
   )
 }
+
