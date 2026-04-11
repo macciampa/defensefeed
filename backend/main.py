@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from database import engine
 from models import create_tables
-from routers import profile, feed
+from routers import profile, feed, intel
 import poller
 
 
@@ -31,6 +31,7 @@ app.add_middleware(
 
 app.include_router(profile.router)
 app.include_router(feed.router)
+app.include_router(intel.router)
 
 
 @app.get("/health")

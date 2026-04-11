@@ -37,3 +37,30 @@ export interface FeedResponse {
   opportunities: Opportunity[]
   total: number
 }
+
+export interface IntelIncumbent {
+  name: string
+  award_amount: number
+  awarded: string
+}
+
+export interface IntelTeamingPair {
+  prime: string
+  sub: string
+  contract: string
+}
+
+export interface IntelPartnerSuggestion {
+  name: string
+  naics: string
+  certs: string[]
+}
+
+export interface IntelData {
+  incumbents: IntelIncumbent[]
+  teaming_pairs: IntelTeamingPair[]
+  partner_suggestions: IntelPartnerSuggestion[]
+  cached_at: string | null
+  partner_suggestions_unavailable?: boolean
+  error?: string  // "intel_unavailable" | "rate_limited"
+}

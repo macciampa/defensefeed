@@ -47,3 +47,34 @@ class OpportunityOut(BaseModel):
 class FeedResponse(BaseModel):
     opportunities: list[OpportunityOut]
     total: int
+
+
+# ---------------------------------------------------------------------------
+# Intel endpoint schemas  (GET /intel/{sam_id})
+# ---------------------------------------------------------------------------
+
+class IncumbentOut(BaseModel):
+    name: str
+    award_amount: float
+    awarded: str
+
+
+class TeamingPairOut(BaseModel):
+    prime: str
+    sub: str
+    contract: str
+
+
+class PartnerSuggestionOut(BaseModel):
+    name: str
+    naics: str
+    certs: list[str]
+
+
+class IntelResponse(BaseModel):
+    incumbents: list[IncumbentOut] = []
+    teaming_pairs: list[TeamingPairOut] = []
+    partner_suggestions: list[PartnerSuggestionOut] = []
+    cached_at: str | None = None
+    partner_suggestions_unavailable: bool = False
+    error: str | None = None  # "intel_unavailable" | "rate_limited"

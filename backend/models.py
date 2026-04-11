@@ -43,4 +43,12 @@ def create_tables(engine):
                 "ON opportunities USING hnsw (opportunity_embedding vector_cosine_ops);"
             )
         )
+        # People Intelligence Layer: cache columns for GET /intel/{sam_id}
+        # ORM model intentionally not updated for these JSONB columns;
+        # all reads/writes use raw SQL (consistent with embedding queries).
+        conn.execute(text("""
+            ALTER TABLE opportunities
+            ADD COLUMN IF NOT EXISTS intel_data JSONB,
+            ADD COLUMN IF NOT EXISTS intel_cached_at TIMESTAMPTZ
+        """))
         conn.commit()

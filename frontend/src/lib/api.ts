@@ -1,4 +1,4 @@
-import type { FeedResponse, ProfileResponse } from '@/types'
+import type { FeedResponse, IntelData, ProfileResponse } from '@/types'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -31,5 +31,13 @@ export async function getFeed(limit = 20): Promise<FeedResponse> {
     throw new Error(err.detail || 'Failed to load feed')
   }
 
+  return res.json()
+}
+
+export async function getIntel(samId: string): Promise<IntelData> {
+  const res = await fetch(`${API_BASE}/intel/${samId}`)
+  if (!res.ok) {
+    throw new Error('intel_unavailable')
+  }
   return res.json()
 }

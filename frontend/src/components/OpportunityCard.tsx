@@ -2,6 +2,7 @@
 
 import type { Opportunity } from '@/types'
 import { DeadlinePill } from './DeadlinePill'
+import { IntelPanel } from './IntelPanel'
 import { MatchBadge } from './MatchBadge'
 
 const SET_ASIDE_LABELS: Record<string, string> = {
@@ -112,6 +113,9 @@ export function OpportunityCard({ opportunity: opp }: Props) {
           </p>
         </div>
       )}
+
+      {/* Intel panel — lazy fetch on expand */}
+      <IntelPanel samId={opp.sam_id} />
 
       {/* Footer */}
       <div className="flex items-center justify-between gap-3 mt-1">
