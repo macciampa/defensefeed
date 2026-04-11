@@ -21,9 +21,10 @@ const SET_ASIDE_LABELS: Record<string, string> = {
 
 interface Props {
   opportunity: Opportunity
+  profileId: number
 }
 
-export function OpportunityCard({ opportunity: opp }: Props) {
+export function OpportunityCard({ opportunity: opp, profileId }: Props) {
   const isHighMatch = opp.similarity >= 0.85
   const setAsideLabel = opp.set_aside_type ? (SET_ASIDE_LABELS[opp.set_aside_type] ?? opp.set_aside_type) : null
   const samUrl = opp.sam_link ?? `https://sam.gov/opp/${opp.sam_id}/view`
@@ -114,7 +115,7 @@ export function OpportunityCard({ opportunity: opp }: Props) {
       )}
 
       {/* Intel panel — lazy fetch on expand */}
-      <IntelPanel samId={opp.sam_id} />
+      <IntelPanel samId={opp.sam_id} profileId={profileId} />
 
       {/* Footer */}
       <div className="flex items-center justify-between gap-3 mt-1">

@@ -72,6 +72,11 @@ function AvatarJD() {
 // Page root
 // ---------------------------------------------------------------------------
 
+interface StoredSession {
+  id: number
+  extraction: ProfileExtraction
+}
+
 export default function FeedPage() {
   const router = useRouter()
 
@@ -79,6 +84,7 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [profile, setProfile] = useState<ProfileExtraction | null>(null)
+  const [profileId, setProfileId] = useState<number | null>(null)
   const [filters, setFilters] = useState<Filters>({
     urgency: 'All',
     minMatch: 0,
@@ -87,25 +93,46 @@ export default function FeedPage() {
   // Demo: fixed new-opportunity count banner
   const [newCount] = useState(3)
 
-  // Load profile from sessionStorage (written by /upload after extraction)
+  // Read session from sessionStorage (written by /upload after extraction).
+  // If none, the visitor hasn't uploaded yet — bounce them to /upload.
   useEffect(() => {
+    let session: StoredSession | null = null
     try {
       const raw = sessionStorage.getItem('defensepulse_profile')
-      if (raw) setProfile(JSON.parse(raw) as ProfileExtraction)
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (typeof parsed?.id === 'number' && parsed?.extraction) {
+          session = parsed as StoredSession
+        }
+      }
     } catch {
-      // sessionStorage unavailable — non-fatal
+      // sessionStorage unavailable — non-fatal, we'll treat as no session
     }
-  }, [])
+
+    if (!session) {
+      router.replace('/upload')
+      return
+    }
+    setProfile(session.extraction)
+    setProfileId(session.id)
+  }, [router])
 
   const fetchFeed = useCallback(async () => {
+    if (profileId === null) return
     setLoading(true)
     setError(null)
     try {
-      const data = await getFeed(50)
+      const data = await getFeed(profileId, 50)
       setOpportunities(data.opportunities)
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Failed to load feed'
       if (msg === 'NO_PROFILE') {
+        // Server-side profile is gone (e.g. DB reset) — clear and bounce.
+        try {
+          sessionStorage.removeItem('defensepulse_profile')
+        } catch {
+          // non-fatal
+        }
         router.replace('/upload')
         return
       }
@@ -113,11 +140,11 @@ export default function FeedPage() {
     } finally {
       setLoading(false)
     }
-  }, [router])
+  }, [profileId, router])
 
   useEffect(() => {
-    fetchFeed()
-  }, [fetchFeed])
+    if (profileId !== null) fetchFeed()
+  }, [profileId, fetchFeed])
 
   // Client-side filtering
   const filteredOpportunities = useMemo(() => {
@@ -257,7 +284,7 @@ export default function FeedPage() {
               {/* Card list */}
               <div className="space-y-3">
                 {filteredOpportunities.map((opp) => (
-                  <OpportunityCard key={opp.id} opportunity={opp} />
+                  <OpportunityCard key={opp.id} opportunity={opp} profileId={profileId!} />
                 ))}
               </div>
 

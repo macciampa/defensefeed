@@ -6,6 +6,7 @@ import { getIntel } from '@/lib/api'
 
 interface Props {
   samId: string
+  profileId: number
 }
 
 const CERT_STYLES: Record<string, string> = {
@@ -112,7 +113,7 @@ function PartnerRow({ partner }: { partner: IntelPartnerSuggestion }) {
 
 // ---- Main component --------------------------------------------------------
 
-export function IntelPanel({ samId }: Props) {
+export function IntelPanel({ samId, profileId }: Props) {
   const [expanded, setExpanded] = useState(false)
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<IntelData | null>(null)
@@ -131,14 +132,14 @@ export function IntelPanel({ samId }: Props) {
     setLoading(true)
     setFetchError(false)
     try {
-      const result = await getIntel(samId)
+      const result = await getIntel(samId, profileId)
       setData(result)
     } catch {
       setFetchError(true)
     } finally {
       setLoading(false)
     }
-  }, [expanded, data, samId])
+  }, [expanded, data, samId, profileId])
 
   const hasError = fetchError || (data?.error === 'intel_unavailable' || data?.error === 'rate_limited')
 

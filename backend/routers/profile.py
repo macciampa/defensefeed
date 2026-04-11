@@ -53,32 +53,31 @@ async def upload_profile(file: UploadFile = File(...), db: Session = Depends(get
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Embedding generation failed: {str(e)}")
 
-    # Upsert profile_id = 1 (single demo user)
-    profile = db.get(UserProfile, 1)
-    if profile is None:
-        profile = UserProfile(id=1)
-        db.add(profile)
-
-    profile.uploaded_at = datetime.now(timezone.utc)
-    profile.raw_text = raw_text
-    profile.naics_codes = extraction["naics_codes"]
-    profile.focus_areas = extraction["focus_areas"]
-    profile.certifications = extraction["certifications"]
-    profile.profile_embedding = embedding
-
+    # Insert a new profile row — each upload creates an independent tenant.
+    # The caller stores the returned profile_id client-side and passes it on
+    # subsequent /feed and /intel requests.
+    profile = UserProfile(
+        uploaded_at=datetime.now(timezone.utc),
+        raw_text=raw_text,
+        naics_codes=extraction["naics_codes"],
+        focus_areas=extraction["focus_areas"],
+        certifications=extraction["certifications"],
+        profile_embedding=embedding,
+    )
+    db.add(profile)
     db.commit()
     db.refresh(profile)
 
     return ProfileResponse(
-        profile_id=1,
+        profile_id=profile.id,
         extraction=ProfileExtraction(**extraction),
         uploaded_at=profile.uploaded_at.isoformat(),
     )
 
 
-@router.get("/profile", response_model=ProfileResponse)
-def get_profile(db: Session = Depends(get_db)):
-    profile = db.get(UserProfile, 1)
+@router.get("/profile/{profile_id}", response_model=ProfileResponse)
+def get_profile(profile_id: int, db: Session = Depends(get_db)):
+    profile = db.get(UserProfile, profile_id)
     if profile is None:
         raise HTTPException(status_code=404, detail="No profile uploaded yet.")
 

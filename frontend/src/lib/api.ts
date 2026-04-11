@@ -19,8 +19,8 @@ export async function uploadProfile(file: File): Promise<ProfileResponse> {
   return res.json()
 }
 
-export async function getFeed(limit = 20): Promise<FeedResponse> {
-  const res = await fetch(`${API_BASE}/feed?profile_id=1&limit=${limit}`)
+export async function getFeed(profileId: number, limit = 20): Promise<FeedResponse> {
+  const res = await fetch(`${API_BASE}/feed?profile_id=${profileId}&limit=${limit}`)
 
   if (res.status === 404) {
     throw new Error('NO_PROFILE')
@@ -34,8 +34,8 @@ export async function getFeed(limit = 20): Promise<FeedResponse> {
   return res.json()
 }
 
-export async function getIntel(samId: string): Promise<IntelData> {
-  const res = await fetch(`${API_BASE}/intel/${samId}`)
+export async function getIntel(samId: string, profileId: number): Promise<IntelData> {
+  const res = await fetch(`${API_BASE}/intel/${samId}?profile_id=${profileId}`)
   if (!res.ok) {
     throw new Error('intel_unavailable')
   }

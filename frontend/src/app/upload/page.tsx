@@ -60,9 +60,13 @@ export default function UploadPage() {
     try {
       const response = await uploadProfile(file)
       setExtraction(response.extraction)
-      // Persist to sessionStorage so feed page can read it
+      // Persist the full session (id + extraction) so the feed page can
+      // both identify this visitor and populate the sidebar.
       try {
-        sessionStorage.setItem('defensepulse_profile', JSON.stringify(response.extraction))
+        sessionStorage.setItem(
+          'defensepulse_profile',
+          JSON.stringify({ id: response.profile_id, extraction: response.extraction }),
+        )
       } catch {
         // sessionStorage not available — non-fatal
       }

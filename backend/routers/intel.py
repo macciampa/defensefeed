@@ -301,11 +301,20 @@ async def _call_b_partners(
 # ---------------------------------------------------------------------------
 
 @router.get("/intel/{sam_id}", response_model=IntelResponse)
-async def get_intel(sam_id: str, db: Session = Depends(get_db)):
-    # 1. Load user profile (always profile_id = 1 — single demo user)
-    profile_row = db.execute(
-        text("SELECT naics_codes, certifications FROM user_profiles WHERE id = 1")
-    ).fetchone()
+async def get_intel(
+    sam_id: str,
+    profile_id: int | None = None,
+    db: Session = Depends(get_db),
+):
+    # 1. Load user profile (optional — partner suggestions fall back to
+    # generic defense-industry matches when no profile_id is provided)
+    if profile_id is not None:
+        profile_row = db.execute(
+            text("SELECT naics_codes, certifications FROM user_profiles WHERE id = :pid"),
+            {"pid": profile_id},
+        ).fetchone()
+    else:
+        profile_row = None
     user_naics: list[str] = list(profile_row.naics_codes or []) if profile_row else []
     user_certs: list[str] = list(profile_row.certifications or []) if profile_row else []
 
