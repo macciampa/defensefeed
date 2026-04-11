@@ -54,7 +54,7 @@ def poll_sam_gov() -> None:
         return
 
     now = datetime.now(timezone.utc)
-    posted_from = (now - timedelta(days=90)).strftime(SAM_DATE_FORMAT)
+    posted_from = (now - timedelta(days=7)).strftime(SAM_DATE_FORMAT)
     posted_to = now.strftime(SAM_DATE_FORMAT)
 
     logger.info("Starting SAM.gov poll: postedFrom=%s postedTo=%s", posted_from, posted_to)
