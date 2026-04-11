@@ -31,6 +31,7 @@ export interface Opportunity {
   urgency: UrgencyLevel
   summary: string
   days_left: string | null
+  sam_link: string | null
 }
 
 export interface FeedResponse {

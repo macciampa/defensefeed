@@ -172,6 +172,7 @@ def poll_sam_gov() -> None:
                 existing.response_deadline = _parse_deadline(opp.get("responseDeadLine"))
                 existing.posted_date = _parse_posted_date(opp.get("postedDate"))
                 existing.description = opp.get("description")
+                existing.sam_link = opp.get("uiLink")
                 existing.opportunity_embedding = embedding
                 existing.synced_at = now
 

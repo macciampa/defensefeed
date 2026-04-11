@@ -49,29 +49,6 @@ function FeedIcon() {
   )
 }
 
-function ProfileIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function SettingsIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="8" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M2.929 2.929l1.06 1.06M12.01 12.01l1.06 1.06M2.929 13.071l1.06-1.06M12.01 3.99l1.06-1.06"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  )
-}
-
 function ChevronIcon({ open }: { open: boolean }) {
   return (
     <svg
@@ -121,17 +98,6 @@ export function Sidebar({ matchCount, profile, filters, onFiltersChange }: Props
           )}
         </div>
 
-        {/* Profile */}
-        <button className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 text-sm transition-colors duration-100">
-          <ProfileIcon />
-          Profile
-        </button>
-
-        {/* Settings */}
-        <button className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-100 text-sm transition-colors duration-100">
-          <SettingsIcon />
-          Settings
-        </button>
       </nav>
 
       {/* Divider */}

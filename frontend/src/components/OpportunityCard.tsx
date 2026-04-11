@@ -26,6 +26,7 @@ interface Props {
 export function OpportunityCard({ opportunity: opp }: Props) {
   const isHighMatch = opp.similarity >= 0.85
   const setAsideLabel = opp.set_aside_type ? (SET_ASIDE_LABELS[opp.set_aside_type] ?? opp.set_aside_type) : null
+  const samUrl = opp.sam_link ?? `https://sam.gov/opp/${opp.sam_id}/view`
 
   const postedDate = opp.posted_date
     ? new Date(opp.posted_date).toLocaleDateString('en-US', {
@@ -34,8 +35,6 @@ export function OpportunityCard({ opportunity: opp }: Props) {
         year: 'numeric',
       })
     : null
-
-  const samUrl = `https://sam.gov/opp/${opp.sam_id}/view`
 
   return (
     <div

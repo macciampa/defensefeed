@@ -82,7 +82,7 @@ async def get_feed(
 
     sql = text("""
         SELECT id, sam_id, title, agency, notice_type, naics_code, set_aside_type,
-               response_deadline, posted_date, description, synced_at,
+               response_deadline, posted_date, description, synced_at, sam_link,
                1 - (opportunity_embedding <=> :profile_vec) AS similarity
         FROM opportunities
         WHERE opportunity_embedding IS NOT NULL
@@ -143,6 +143,7 @@ async def get_feed(
             "posted_date": row.posted_date,
             "description": row.description,
             "synced_at": row.synced_at,
+            "sam_link": row.sam_link,
             # Computed fields
             "score": round(score, 4),
             "similarity": round(similarity, 4),

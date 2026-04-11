@@ -35,6 +35,7 @@ class OpportunityOut(BaseModel):
     posted_date: datetime | None = None
     description: str | None = None
     synced_at: datetime | None = None
+    sam_link: str | None = None
 
     # Computed / scored fields — not stored in the ORM row
     score: float = 0.0

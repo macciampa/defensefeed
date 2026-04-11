@@ -30,6 +30,7 @@ class Opportunity(Base):
     response_deadline: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     posted_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    sam_link: Mapped[str | None] = mapped_column(Text, nullable=True)
     opportunity_embedding: Mapped[list[float] | None] = mapped_column(Vector(1536), nullable=True)
     synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
@@ -49,6 +50,7 @@ def create_tables(engine):
         conn.execute(text("""
             ALTER TABLE opportunities
             ADD COLUMN IF NOT EXISTS intel_data JSONB,
-            ADD COLUMN IF NOT EXISTS intel_cached_at TIMESTAMPTZ
+            ADD COLUMN IF NOT EXISTS intel_cached_at TIMESTAMPTZ,
+            ADD COLUMN IF NOT EXISTS sam_link TEXT
         """))
         conn.commit()
