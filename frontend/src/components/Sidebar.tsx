@@ -103,7 +103,7 @@ export function Sidebar({ matchCount, profile, filters, onFiltersChange }: Props
       <div className="flex items-center gap-2.5 px-4 h-16 border-b border-gray-100 flex-shrink-0">
         <ShieldIcon />
         <div className="flex flex-col leading-tight">
-          <span className="font-bold text-gray-900 tracking-widest text-sm">PRYZM</span>
+          <span className="font-bold text-gray-900 tracking-widest text-sm">DEFENSEPULSE</span>
           <span className="text-[10px] text-gray-400 tracking-wide">Intelligence Platform</span>
         </div>
       </div>

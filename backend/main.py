@@ -19,7 +19,7 @@ async def lifespan(app: FastAPI):
     poller.stop_scheduler()
 
 
-app = FastAPI(title="Pryzm API", lifespan=lifespan)
+app = FastAPI(title="DefensePulse API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

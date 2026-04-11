@@ -73,7 +73,7 @@ export default function FeedPage() {
   // Load profile from sessionStorage (written by /upload after extraction)
   useEffect(() => {
     try {
-      const raw = sessionStorage.getItem('pryzm_profile')
+      const raw = sessionStorage.getItem('defensepulse_profile')
       if (raw) setProfile(JSON.parse(raw) as ProfileExtraction)
     } catch {
       // sessionStorage unavailable — non-fatal

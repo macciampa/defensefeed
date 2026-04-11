@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Pryzm · Intelligence Platform',
+  title: 'DefensePulse · Intelligence Platform',
   description: 'Personalized government opportunity feed for defense contractors',
 }
 

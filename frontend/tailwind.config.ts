@@ -7,7 +7,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        pryzm: {
+        defensepulse: {
           DEFAULT: '#2563eb',
           50: '#eff6ff',
           600: '#2563eb',

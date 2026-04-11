@@ -62,7 +62,7 @@ export default function UploadPage() {
       setExtraction(response.extraction)
       // Persist to sessionStorage so feed page can read it
       try {
-        sessionStorage.setItem('pryzm_profile', JSON.stringify(response.extraction))
+        sessionStorage.setItem('defensepulse_profile', JSON.stringify(response.extraction))
       } catch {
         // sessionStorage not available — non-fatal
       }
@@ -85,7 +85,7 @@ export default function UploadPage() {
         <div className="flex items-center justify-center gap-3 mb-10">
           <ShieldIcon />
           <div className="flex flex-col leading-tight">
-            <span className="font-bold text-gray-900 tracking-widest text-lg">PRYZM</span>
+            <span className="font-bold text-gray-900 tracking-widest text-lg">DEFENSEPULSE</span>
             <span className="text-xs text-gray-400 tracking-wide">Intelligence Platform</span>
           </div>
         </div>
