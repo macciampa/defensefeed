@@ -383,11 +383,29 @@ async def get_intel(sam_id: str, db: Session = Depends(get_db)):
     incumbents, teaming_pairs = a_result
 
     # --- Handle Call B result ---
+    incumbent_name_set = {inc["name"].upper() for inc in incumbents}
+
     if isinstance(b_result, Exception):
         logger.warning("SAM.gov partner fetch failed for %s: %s", sam_id, b_result)
-        partner_suggestions_unavailable = True
+        # Fallback: derive suggestions from subaward teaming pairs we already fetched.
+        # Subs that worked on related contracts are high-quality partner candidates.
+        seen_names: set[str] = set()
+        for pair in teaming_pairs:
+            for company in (pair.get("sub"), pair.get("prime")):
+                if not company:
+                    continue
+                key = company.upper()
+                if key not in seen_names and key not in incumbent_name_set:
+                    seen_names.add(key)
+                    partner_suggestions.append({"name": company, "naics": naics_code, "certs": []})
+                if len(partner_suggestions) >= 5:
+                    break
+            if len(partner_suggestions) >= 5:
+                break
+        # Only mark unavailable if we truly have nothing to show
+        if not partner_suggestions:
+            partner_suggestions_unavailable = True
     else:
-        incumbent_name_set = {inc["name"].upper() for inc in incumbents}
         partner_suggestions = [
             p for p in b_result
             if p["name"].upper() not in incumbent_name_set
