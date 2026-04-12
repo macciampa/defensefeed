@@ -48,9 +48,41 @@ function FocusChip({ area }: { area: string }) {
   )
 }
 
+// ---------------------------------------------------------------------------
+// Sample capability statements — static PDFs in /samples/
+// ---------------------------------------------------------------------------
+
+const SAMPLES = [
+  {
+    id: 'tdc',
+    file: '/samples/tdc.pdf',
+    company: 'TDC',
+    industry: 'IT Consulting & Public Safety',
+    tags: ['MBE', 'SDB', 'HUB'],
+    description: 'Enterprise technology for 911/311, education data, and health exchanges',
+  },
+  {
+    id: 'ztech',
+    file: '/samples/ztech.pdf',
+    company: 'ZTECH Precision',
+    industry: 'Aerospace Manufacturing',
+    tags: ['AS9100', 'ITAR', 'CMMC'],
+    description: 'Precision CNC machining for aircraft, spacecraft, and armament components',
+  },
+  {
+    id: 'tli',
+    file: '/samples/tli.pdf',
+    company: 'TLI Construction',
+    industry: 'Federal Construction',
+    tags: ['8(a)', 'WOSB', 'EDWOSB'],
+    description: 'General construction for Air Force, Army, VA, and Coast Guard facilities',
+  },
+]
+
 export default function UploadPage() {
   const router = useRouter()
   const [uploading, setUploading] = useState(false)
+  const [loadingSample, setLoadingSample] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [extraction, setExtraction] = useState<ProfileExtraction | null>(null)
 
@@ -78,6 +110,23 @@ export default function UploadPage() {
       setUploading(false)
     }
   }
+
+  const handleSample = async (sample: (typeof SAMPLES)[number]) => {
+    setLoadingSample(sample.id)
+    setError(null)
+    try {
+      const res = await fetch(sample.file)
+      const blob = await res.blob()
+      const file = new File([blob], `${sample.company}.pdf`, { type: 'application/pdf' })
+      await handleUpload(file)
+    } catch {
+      // error already set by handleUpload
+    } finally {
+      setLoadingSample(null)
+    }
+  }
+
+  const isBusy = uploading || loadingSample !== null
 
   return (
     <div
@@ -109,7 +158,54 @@ export default function UploadPage() {
 
           {/* Upload zone */}
           {!extraction && (
-            <UploadZone onUpload={handleUpload} isUploading={uploading} error={error} />
+            <>
+              <UploadZone onUpload={handleUpload} isUploading={uploading} error={error} />
+
+              {/* Sample selector */}
+              <div className="mt-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-1 h-px bg-gray-200" />
+                  <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+                    Or try a sample
+                  </span>
+                  <div className="flex-1 h-px bg-gray-200" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {SAMPLES.map((sample) => (
+                    <button
+                      key={sample.id}
+                      onClick={() => handleSample(sample)}
+                      disabled={isBusy}
+                      className={[
+                        'text-left p-3.5 rounded-xl border transition-all duration-150',
+                        isBusy
+                          ? 'opacity-50 cursor-not-allowed border-gray-200 bg-gray-50'
+                          : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm cursor-pointer',
+                      ].join(' ')}
+                    >
+                      <p className="text-sm font-semibold text-gray-900 mb-0.5">
+                        {sample.company}
+                        {loadingSample === sample.id && (
+                          <span className="ml-2 inline-block w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin align-middle" />
+                        )}
+                      </p>
+                      <p className="text-xs text-blue-600 font-medium mb-1.5">{sample.industry}</p>
+                      <p className="text-xs text-gray-500 leading-relaxed mb-2">{sample.description}</p>
+                      <div className="flex flex-wrap gap-1">
+                        {sample.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
           )}
 
           {/* Extraction preview */}
