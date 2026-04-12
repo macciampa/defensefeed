@@ -13,10 +13,12 @@ import poller
 async def lifespan(app: FastAPI):
     # Startup
     create_tables(engine)
-    poller.start_scheduler()
+    # Scheduler disabled — SAM.gov free-tier quota (10/day) gets exhausted
+    # by hourly polling. Re-enable once we have a System Account (1,000/day)
+    # or after a 48h cooldown. Manual POST /poll still works.
+    # poller.start_scheduler()
     yield
-    # Shutdown
-    poller.stop_scheduler()
+    # poller.stop_scheduler()
 
 
 app = FastAPI(title="DefensePulse API", lifespan=lifespan)
