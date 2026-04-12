@@ -4,10 +4,14 @@ from datetime import datetime, timezone
 
 def compute_score(similarity: float, posted_date: datetime | None, response_deadline: datetime | None) -> float:
     """
-    Score = similarity × recency_weight × (1 + deadline_urgency)
+    Score = 0.85 * similarity + 0.10 * recency + 0.05 * urgency
 
-    recency_weight = exp(-days_since_posted / 30)  [1.0 when fresh, ~0.05 at 90 days]
-    deadline_urgency = max(0, 1 - days_until_deadline / 14)  [0.0 beyond 2 weeks, 1.0 today]
+    Similarity is the dominant signal so that different capability
+    profiles produce visibly different feed rankings (personalization).
+    Recency and deadline urgency act as lightweight tiebreakers.
+
+    recency = exp(-days_since_posted / 30)  [1.0 when fresh, ~0.05 at 90 days]
+    urgency = max(0, 1 - days_until_deadline / 14)  [0.0 beyond 2 weeks, 1.0 today]
     """
     now = datetime.now(timezone.utc)
 
@@ -17,21 +21,21 @@ def compute_score(similarity: float, posted_date: datetime | None, response_dead
         if posted_date.tzinfo is None:
             posted_date = posted_date.replace(tzinfo=timezone.utc)
         days_since_posted = max(0, (now - posted_date).days)
-        recency_weight = math.exp(-days_since_posted / 30)
+        recency = math.exp(-days_since_posted / 30)
     else:
-        recency_weight = 0.5  # Unknown posting date: neutral weight
+        recency = 0.5  # Unknown posting date: neutral weight
 
     # Deadline urgency
-    deadline_urgency = 0.0
+    urgency = 0.0
     if response_deadline:
         if response_deadline.tzinfo is None:
             response_deadline = response_deadline.replace(tzinfo=timezone.utc)
         days_until = (response_deadline - now).days
         if days_until >= 0:  # Not expired
-            deadline_urgency = max(0.0, 1.0 - days_until / 14)
+            urgency = max(0.0, 1.0 - days_until / 14)
         # Expired opportunities: urgency stays 0
 
-    return similarity * recency_weight * (1 + deadline_urgency)
+    return 0.85 * similarity + 0.10 * recency + 0.05 * urgency
 
 
 def get_urgency_level(response_deadline: datetime | None) -> str:
