@@ -191,15 +191,29 @@ export default function UploadPage() {
                       </p>
                       <p className="text-xs text-blue-600 font-medium mb-1.5">{sample.industry}</p>
                       <p className="text-xs text-gray-500 leading-relaxed mb-2">{sample.description}</p>
-                      <div className="flex flex-wrap gap-1">
-                        {sample.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                      <div className="flex items-center justify-between gap-2 mt-2">
+                        <div className="flex flex-wrap gap-1">
+                          {sample.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        <a
+                          href={sample.file}
+                          download={`${sample.company} Capability Statement.pdf`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex-shrink-0 text-gray-400 hover:text-blue-600 transition-colors"
+                          title="Download PDF"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 2v8M4 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M2 13h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
+                        </a>
                       </div>
                     </button>
                   ))}
